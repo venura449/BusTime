@@ -6,13 +6,13 @@ import { Link, useLocation } from 'react-router-dom';
  */
 const Navigation = () => {
   const location = useLocation();
-  
+
   return (
     <nav className="navigation">
       <div className="nav-brand">
         <Link to="/">ThingSpeak Tracker</Link>
       </div>
-      
+
       <ul className="nav-links">
         <li className={location.pathname === '/' ? 'active' : ''}>
           <Link to="/">Home</Link>
@@ -22,6 +22,9 @@ const Navigation = () => {
         </li>
         <li className={location.pathname === '/locator2' ? 'active' : ''}>
           <Link to="/locator2">Locator 2</Link>
+        </li>
+        <li className={location.pathname === '/current-location' ? 'active' : ''}>
+          <Link to="/current-location">Your Location</Link>
         </li>
       </ul>
     </nav>

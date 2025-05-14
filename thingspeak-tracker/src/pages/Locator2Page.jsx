@@ -3,6 +3,7 @@ import Map from '../components/Map';
 import DataDisplay from '../components/DataDisplay';
 import ThingSpeakService from '../services/ThingSpeakService';
 import { formatETA } from '../utils/formatUtils';
+import { getCurrentLocation, calculateDistance, calculateETA, formatDistance } from '../utils/locationUtils';
 
 /**
  * Page component for Locator 2
@@ -11,6 +12,30 @@ const Locator2Page = () => {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [userLocation, setUserLocation] = useState(null);
+  const [locationError, setLocationError] = useState(null);
+
+  // Effect to get user's location
+  useEffect(() => {
+    const getLocation = async () => {
+      try {
+        const location = await getCurrentLocation();
+        console.log('Got user location:', location);
+        setUserLocation(location);
+        setLocationError(null);
+      } catch (err) {
+        console.error('Error getting user location:', err);
+        setLocationError('Could not get your location. Please enable location services.');
+      }
+    };
+
+    getLocation();
+
+    // Set up interval to refresh user location every 60 seconds
+    const locationIntervalId = setInterval(getLocation, 60000);
+
+    return () => clearInterval(locationIntervalId);
+  }, []);
 
   useEffect(() => {
     // Function to fetch data from ThingSpeak
@@ -31,6 +56,7 @@ const Locator2Page = () => {
           const lon2 = parseFloat(latestFeed2.field6);
           const speed2 = parseFloat(latestFeed2.field7);
 
+          // Create base data object
           const parsedData2 = {
             id: 'locator2',
             name: 'Locator 2',
@@ -41,6 +67,24 @@ const Locator2Page = () => {
             rawEta: latestFeed2.field8 || 'Unknown', // Store the raw ETA value
             lastUpdate: latestFeed2.created_at
           };
+
+          // Calculate distance and ETA if user location is available
+          if (userLocation && parsedData2.latitude && parsedData2.longitude) {
+            const distance = calculateDistance(
+              userLocation.latitude,
+              userLocation.longitude,
+              parsedData2.latitude,
+              parsedData2.longitude
+            );
+
+            parsedData2.distance = distance;
+
+            // Calculate ETA based on current speed if available
+            if (parsedData2.speed && parsedData2.speed > 0) {
+              const calculatedEtaMinutes = calculateETA(distance, parsedData2.speed);
+              parsedData2.calculatedEta = formatETA(calculatedEtaMinutes);
+            }
+          }
 
           // Log the raw feed data for debugging
           console.log('Raw locator 2 feed data:', latestFeed2);
@@ -87,6 +131,7 @@ const Locator2Page = () => {
       <div className="content">
         {loading && !data && <p className="loading">Loading data...</p>}
         {error && <p className="error">{error}</p>}
+        {locationError && <p className="error">{locationError}</p>}
 
         {data && (
           <>
@@ -98,11 +143,17 @@ const Locator2Page = () => {
                   latitude: data.latitude,
                   longitude: data.longitude,
                   speed: data.speed,
-                  eta: data.eta
+                  eta: data.eta,
+                  distance: data.distance,
+                  calculatedEta: data.calculatedEta
                 }
               ].filter(Boolean)}
+              userLocation={userLocation}
             />
-            <DataDisplay locators={[data].filter(Boolean)} />
+            <DataDisplay
+              locators={[data].filter(Boolean)}
+              userLocation={userLocation}
+            />
           </>
         )}
       </div>

@@ -1,11 +1,13 @@
 import React from 'react';
+import { formatDistance } from '../utils/locationUtils';
 
 /**
  * Component to display data from ThingSpeak for multiple locators
  * @param {Object} props - Component props
  * @param {Array} props.locators - Array of locator data objects to display
+ * @param {Object} props.userLocation - User's current location (optional)
  */
-const DataDisplay = ({ locators }) => {
+const DataDisplay = ({ locators, userLocation }) => {
   // Ensure locators is an array and filter out any null/undefined values
   const locatorsArray = Array.isArray(locators) ? locators.filter(Boolean) : [];
 
@@ -41,6 +43,18 @@ const DataDisplay = ({ locators }) => {
               <h4>Last Updated</h4>
               <p>{locator.lastUpdate ? new Date(locator.lastUpdate).toLocaleString() : 'N/A'}</p>
             </div>
+            {userLocation && locator.distance !== undefined && (
+              <div className="data-item">
+                <h4>Distance from You</h4>
+                <p>{formatDistance(locator.distance)}</p>
+              </div>
+            )}
+            {userLocation && locator.calculatedEta !== undefined && (
+              <div className="data-item">
+                <h4>Calculated ETA</h4>
+                <p>{locator.calculatedEta}</p>
+              </div>
+            )}
           </div>
         </div>
       ))}

@@ -5,6 +5,7 @@ import Navigation from './components/Navigation';
 import HomePage from './pages/HomePage';
 import Locator1Page from './pages/Locator1Page';
 import Locator2Page from './pages/Locator2Page';
+import CurrentLocationPage from './pages/CurrentLocationPage';
 
 /**
  * Main App component with routing
@@ -20,6 +21,7 @@ function App() {
             <Route path="/" element={<HomePage />} />
             <Route path="/locator1" element={<Locator1Page />} />
             <Route path="/locator2" element={<Locator2Page />} />
+            <Route path="/current-location" element={<CurrentLocationPage />} />
           </Routes>
         </main>
 
