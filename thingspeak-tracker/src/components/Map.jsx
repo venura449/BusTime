@@ -17,8 +17,9 @@ L.Icon.Default.mergeOptions({
  * @param {Object} props - Component props
  * @param {Array} props.locators - Array of locator objects with coordinates and data
  * @param {Object} props.userLocation - User's current location (optional)
+ * @param {boolean} props.showFixedMarker - Whether to show the fixed marker (optional)
  */
-const Map = ({ locators, userLocation }) => {
+const Map = ({ locators, userLocation, showFixedMarker }) => {
   // State for user's current location
   const [currentLocation, setCurrentLocation] = useState(userLocation || null);
 
@@ -86,6 +87,15 @@ const Map = ({ locators, userLocation }) => {
     shadowSize: [41, 41]
   });
 
+  const orangeIcon = new L.Icon({
+    iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-orange.png',
+    shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    popupAnchor: [1, -34],
+    shadowSize: [41, 41]
+  });
+
   return (
     <div className="map-container">
       <MapContainer
@@ -110,6 +120,23 @@ const Map = ({ locators, userLocation }) => {
                 <h3>Your Location</h3>
                 <p>Latitude: {currentLocation.latitude}</p>
                 <p>Longitude: {currentLocation.longitude}</p>
+              </div>
+            </Popup>
+          </Marker>
+        )}
+
+        {/* Render fixed marker if showFixedMarker is true */}
+        {showFixedMarker && (
+          <Marker
+            key="fixed-location"
+            position={[6.9717553, 79.9167633]}
+            icon={orangeIcon}
+          >
+            <Popup>
+              <div>
+                <h3>Fixed Location</h3>
+                <p>Latitude: 6.9717553</p>
+                <p>Longitude: 79.9167633</p>
               </div>
             </Popup>
           </Marker>

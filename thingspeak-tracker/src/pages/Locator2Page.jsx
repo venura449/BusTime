@@ -149,6 +149,7 @@ const Locator2Page = () => {
                 }
               ].filter(Boolean)}
               userLocation={userLocation}
+              showFixedMarker={true}
             />
             <DataDisplay
               locators={[data].filter(Boolean)}
