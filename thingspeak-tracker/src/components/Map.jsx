@@ -18,8 +18,9 @@ L.Icon.Default.mergeOptions({
  * @param {Array} props.locators - Array of locator objects with coordinates and data
  * @param {Object} props.userLocation - User's current location (optional)
  * @param {boolean} props.showFixedMarker - Whether to show the fixed marker (optional)
+ * @param {boolean} props.showUserLocation - Whether to show the user's location marker (optional)
  */
-const Map = ({ locators, userLocation, showFixedMarker }) => {
+const Map = ({ locators, userLocation, showFixedMarker, showUserLocation = true }) => {
   // State for user's current location
   const [currentLocation, setCurrentLocation] = useState(userLocation || null);
 
@@ -108,8 +109,8 @@ const Map = ({ locators, userLocation, showFixedMarker }) => {
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
 
-        {/* Render user's current location marker if available */}
-        {currentLocation && (
+        {/* Render user's current location marker if available and showUserLocation is true */}
+        {showUserLocation && currentLocation && (
           <Marker
             key="user-location"
             position={[currentLocation.latitude, currentLocation.longitude]}

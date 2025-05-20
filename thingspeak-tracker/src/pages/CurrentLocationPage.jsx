@@ -191,6 +191,7 @@ const CurrentLocationPage = () => {
               }))}
               userLocation={userLocation}
               showFixedMarker={false}
+              showUserLocation={true}
             />
             <DataDisplay
               locators={locators}
